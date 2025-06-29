@@ -5,23 +5,39 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import React from 'react';
+import { Button, View, StyleSheet } from 'react-native';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+import { Amplify } from 'aws-amplify';
+import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react-native';
+
+import outputs from './amplify_outputs.json';
+
+Amplify.configure(outputs);
+
+const SignOutButton = () => {
+  const { signOut } = useAuthenticator();
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
+    <View style={styles.signOutButton}>
+      <Button title="Sign Out" onPress={signOut} />
     </View>
   );
-}
+};
+
+const App = () => {
+  return (
+    <Authenticator.Provider>
+      <Authenticator>
+        <SignOutButton />
+      </Authenticator>
+    </Authenticator.Provider>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  signOutButton: {
+    alignSelf: 'flex-end',
   },
 });
 
